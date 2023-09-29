@@ -32,22 +32,22 @@ exit 0
 fi
 
 # Modules and directory for training
-source activate nerfstudio6-utility1
+source activate nerfstudio10
 module load colmap
 module load cuda
-cd /work/mech-ai/arbab/nerfstudio
+cd /work/mech-ai/arbab/NeRFs-in-the-Wild
 
 
 
 
 if [ $already_trained -eq 0 ]; then
   SECONDS=0
-  ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion False --data $data_path --max-num-iterations $training_iterations
+  ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations
   duration=$SECONDS
   echo "$duration" > "${output_directory_for_model_evaluation}/time_taken.txt"
 fi
 # Point cloud export
-latest_folder=$(ls -d /work/mech-ai/arbab/nerfstudio/outputs/${data_path##*/}/$model_name/* | sort -r | head -n 1)
+latest_folder=$(ls -d /work/mech-ai/arbab/NeRFs-in-the-Wild/outputs/${data_path##*/}/$model_name/* | sort -r | head -n 1)
 config_for_export="$latest_folder/config.yml"
 echo $config_for_export
 output_dir_pointcloud="$(pwd)/exports/pcd/${data_path##*/}/${model_name}"

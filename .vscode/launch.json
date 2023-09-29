@@ -5,6 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Bash Debug",
+      "type": "bashdb",
+      "request": "launch",
+      "program": "${file}",
+      "args": [
+        "nerfacto",
+        "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
+        "2000"
+      ]
+
+    },
+    {
       "name": "Launch Chrome against localhost",
       "request": "launch",
       "type": "chrome",
