@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e 
 #Sample Run: ./train-and-evaluate-single.sh nerfacto /work/mech-ai/arbab/nerfstudio/data/nerfstudio/CCL-plant-for-evaluation/Jul18at3-17PM-poly-processed-rotated-half 10000
 
 # This assumes that the data is preprocessed already
