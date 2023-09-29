@@ -42,10 +42,15 @@ cd /work/mech-ai/arbab/NeRFs-in-the-Wild
 
 if [ $already_trained -eq 0 ]; then
   SECONDS=0
-  ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations
+  if [ "$model_name" = "nerfacto" ]; then
+    ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations # previously it had prediction of normals but that's replaced by open3d
+  else
+    ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations
+  fi
   duration=$SECONDS
   echo "$duration" > "${output_directory_for_model_evaluation}/time_taken.txt"
 fi
+
 # Point cloud export
 latest_folder=$(ls -d /work/mech-ai/arbab/NeRFs-in-the-Wild/outputs/${data_path##*/}/$model_name/* | sort -r | head -n 1)
 config_for_export="$latest_folder/config.yml"
@@ -57,13 +62,13 @@ bbox_max=(1.0 1.0 1.0)
 if [ $already_trained -eq 0 ]; then # Only training if it was not already trained
   case "$model_name" in
     "mipnerf")
-      ns-export pointcloud --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True --estimate-normals False --use-bounding-box True --bounding-box-min -"${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}" --rgb_output_name 'rgb_fine' --depth_output_name 'rgb_fine'
+      ns-export pointcloud --normal-method open3d --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True  --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}" --rgb_output_name 'rgb_fine' --depth_output_name 'rgb_fine'
       ;;
     "instant-ngp")
-      ns-export pointcloud --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True --estimate-normals False --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}"
+      ns-export pointcloud --normal-method open3d --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True  --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}"
       ;;
     "nerfacto")
-      ns-export pointcloud --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True --estimate-normals False --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}" 
+      ns-export pointcloud --normal-method open3d --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True  --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}" 
       ;;
   esac
 fi
@@ -103,7 +108,7 @@ python run.py \
 
 ## PSNR calculation, again activating the nerfstudio environment
 cd $nerfstudio_main_directory
-source activate nerfstudio6-utility1
+source activate nerfstudio10
 ns-eval --load-config $config_for_export --output-path ${output_directory_for_model_evaluation}/psnr.json
 
 #Save the value of variable config_for_export in a file inside the evaluation folder; This is also used as a flag for skipping the training
