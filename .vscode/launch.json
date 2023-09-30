@@ -10,9 +10,9 @@
       "request": "launch",
       "program": "${file}",
       "args": [
-        "mip-nerf",
+        "mipnerf",
         "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
-        "2000"
+        "509"
       ]
 
     },

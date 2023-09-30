@@ -47,7 +47,7 @@ if [ $already_trained -eq 0 ]; then
   if [ "$model_name" = "nerfacto" ]; then
     ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations # previously it had prediction of normals but that's replaced by open3d
   else
-    ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations
+    ns-train $model_name --viewer.websocket-port 8008 --viewer.quit-on-train-completion False --data $data_path --max-num-iterations $training_iterations
   fi
   duration=$SECONDS
   echo "$duration" > "${output_directory_for_model_evaluation}/time_taken.txt"
