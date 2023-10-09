@@ -2,7 +2,7 @@ import csv
 import json
 import os
 
-csv_file = "results-28Sep.csv"
+csv_file = "results-9oct.csv"
 
 # Initialize CSV file
 with open(csv_file, 'w') as f:
@@ -54,7 +54,39 @@ for model in os.listdir(root_dir):
             csv_writer = csv.writer(f)
             csv_writer.writerow([model, iteration, precision, recall, f1_score, psnr, ssim, lpips, time_taken])
 
-print("Done!")
+
+print("Done compiling!")
 
 
 
+# Define the column names
+MODEL_NAME_COL = "Model Name"
+ITERATIONS_COL = "Number of Iterations"
+
+# Model rename dictionary
+model_name_mapping = {
+    "nerfacto": "NeRFacto",
+    "mipnerf": "MipNeRF",
+    "instant-ngp": "Instant-NGP"
+}
+
+# Read the CSV file into a list of rows (as dictionaries)
+with open(csv_file, 'r') as f:
+    csv_reader = csv.DictReader(f)
+    rows = list(csv_reader)
+
+# Rename the model names based on the provided dictionary
+for row in rows:
+    row[MODEL_NAME_COL] = model_name_mapping.get(row[MODEL_NAME_COL], row[MODEL_NAME_COL])
+
+# Sort the rows first by model name and then by the number of iterations
+sorted_rows = sorted(rows, key=lambda x: (x[MODEL_NAME_COL], int(x[ITERATIONS_COL])))
+
+# Write the sorted rows back to the CSV file
+with open(csv_file, 'w', newline='') as f:
+    fieldnames = csv_reader.fieldnames  # get the fieldnames from the csv_reader
+    csv_writer = csv.DictWriter(f, fieldnames=fieldnames)
+    csv_writer.writeheader()  # Write the headers back
+    csv_writer.writerows(sorted_rows)
+
+print("CSV file sorted and model names updated!")
