@@ -1,3 +1,5 @@
+# THIS ONLY WORKS FROM INTERACTIVE NOVA ON DEMAND WITH GUI on the server
+
 import json
 import os
 

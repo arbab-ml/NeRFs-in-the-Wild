@@ -10,9 +10,9 @@
       "request": "launch",
       "program": "${file}",
       "args": [
-        "mipnerf",
+        "nerfacto",
         "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
-        "509"
+        "20000-replica"
       ]
 
     },

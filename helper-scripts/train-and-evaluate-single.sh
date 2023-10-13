@@ -94,9 +94,10 @@ cd /work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox
 # make this command generic: python run.py --dataset-dir data/ccl-plant --traj-path data/ccl-plant/ccl-plant_COLMAP_SfM.log --ply-path data/ccl-plant/ccl-plant-nerfacto.ply
 cd evaluation
 
-
-
+# If the model is already trained, then we don't need to copy the point cloud. Otherwise, we copy the point cloud 
+if [ $already_trained -eq 0 ]; then 
 cp "${output_dir_pointcloud}/point_cloud.ply" ${output_directory_for_model_evaluation}/point_cloud.ply
+fi
 
 python run.py \
   --dataset-dir ${tank_and_temples_main_directory}/data/${data_identifier} \
@@ -109,12 +110,15 @@ python run.py \
 # rm -rf data/${data_identifier}/evaluation/*
 
 ## PSNR calculation, again activating the nerfstudio environment
-cd $nerfstudio_main_directory
-source activate nerfstudio10
-ns-eval --load-config $config_for_export --output-path ${output_directory_for_model_evaluation}/psnr.json
 
-#Save the value of variable config_for_export in a file inside the evaluation folder; This is also used as a flag for skipping the training
-echo $config_for_export > ${output_directory_for_model_evaluation}/config_for_export.txt
+#UNCOMMENT BELOW
+
+# cd $nerfstudio_main_directory
+# source activate nerfstudio10
+# ns-eval --load-config $config_for_export --output-path ${output_directory_for_model_evaluation}/psnr.json
+
+# #Save the value of variable config_for_export in a file inside the evaluation folder; This is also used as a flag for skipping the training
+# echo $config_for_export > ${output_directory_for_model_evaluation}/config_for_export.txt
 
 
 
