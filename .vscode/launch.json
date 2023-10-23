@@ -11,8 +11,8 @@
       "program": "${file}",
       "args": [
         "nerfacto",
-        "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
-        "20000-replica"
+        "data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-processed",
+        "99"
       ]
 
     },
