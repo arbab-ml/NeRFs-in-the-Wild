@@ -2,7 +2,7 @@ import csv
 import json
 import os
 
-csv_file = "results-9oct.csv"
+csv_file = "results-multiple.csv"
 
 # Initialize CSV file
 with open(csv_file, 'w') as f:
@@ -10,7 +10,7 @@ with open(csv_file, 'w') as f:
     headers = ["Model Name", "Number of Iterations", "Precision", "Recall", "F1 Score", "PSNR", "SSIM", "LPIPS", "Time Taken (s)"]
     csv_writer.writerow(headers)
 
-root_dir = "/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scannned-data-single-img-50-qual-90-processed/evaluations"
+root_dir = "/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scanned-data-multiple-polycam-images-processed/evaluations"
 
 for model in os.listdir(root_dir):
     model_dir = os.path.join(root_dir, model)

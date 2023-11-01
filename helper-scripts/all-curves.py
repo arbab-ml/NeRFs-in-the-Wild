@@ -1,9 +1,9 @@
 #Iterating thorough all
 import os
 
-root_dir = "/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scannned-data-single-img-50-qual-90-processed/evaluations"
+root_dir = "/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scanned-data-multiple-polycam-images-processed/evaluations"
 
-output_folder = "helper-scripts/all-curves"
+output_folder = "helper-scripts/all-curves-multiple"
 
 # Check if the output folder exists, if not create it
 if not os.path.exists(output_folder):

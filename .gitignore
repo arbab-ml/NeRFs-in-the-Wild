@@ -3,7 +3,8 @@
 *.jpg
 *.jpeg
 *.mp4
-*.ipynb
+# *.ipynb
+*.ply
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
