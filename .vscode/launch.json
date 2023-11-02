@@ -5,14 +5,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "bashdb",
+      "request": "launch",
+      "name": "Bash-Debug (simplest configuration)",
+      "cwd": "${workspaceFolder}",
+      "program": "${file}",
+      "showDebugOutput": true,
+      "terminalKind": "integrated"
+    },
+    
+    {
       "name": "Bash Debug",
       "type": "bashdb",
       "request": "launch",
       "program": "${file}",
+      "showDebugOutput": true,
+      "terminalKind": "integrated",
+      // "console": "integratedTerminal",
       "args": [
         "nerfacto",
-        "data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-processed",
-        "99"
+        "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
+        "1004"
       ]
 
     },

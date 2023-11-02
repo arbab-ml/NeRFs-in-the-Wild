@@ -228,7 +228,7 @@ class NerfactoModel(Model):
         self.normals_shader = NormalsShader()
 
         # losses
-        self.rgb_loss = MSELoss()
+        # self.rgb_loss = MSELoss()
 
         # metrics
         self.psnr = PeakSignalNoiseRatio(data_range=1.0)
@@ -347,7 +347,9 @@ class NerfactoModel(Model):
             gt_image=image,
         )
 
-        loss_dict["rgb_loss"] = self.rgb_loss(gt_rgb, pred_rgb)
+        # loss_dict["rgb_loss"] = self.rgb_loss(gt_rgb, pred_rgb)
+        loss_dict["rgb_loss"] = self.weighted_rgb_loss(gt_rgb, pred_rgb)
+
         if self.training:
             loss_dict["interlevel_loss"] = self.config.interlevel_loss_mult * interlevel_loss(
                 outputs["weights_list"], outputs["ray_samples_list"]
@@ -405,3 +407,17 @@ class NerfactoModel(Model):
             images_dict[key] = prop_depth_i
 
         return metrics_dict, images_dict
+
+    def compute_green_mask(self, gt_rgb: torch.Tensor, threshold: float = 0.5) -> torch.Tensor:
+        is_green = (gt_rgb[..., 1] > threshold) & (gt_rgb[..., 1] > gt_rgb[..., 0]) & (gt_rgb[..., 1] > gt_rgb[..., 2])
+        return is_green.float()
+
+    def weighted_rgb_loss(self, gt_rgb: torch.Tensor, pred_rgb: torch.Tensor, green_weight: float = 2.0) -> torch.Tensor:
+        green_mask = self.compute_green_mask(gt_rgb)
+        # Expand green_mask dimensions to match gt_rgb
+        green_mask_expanded = green_mask.unsqueeze(1).expand_as(gt_rgb)
+        
+        loss = (gt_rgb - pred_rgb)**2
+        weighted_loss = loss * (1 + green_mask_expanded * (green_weight - 1))
+        
+        return torch.mean(weighted_loss)

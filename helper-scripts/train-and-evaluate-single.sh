@@ -1,4 +1,5 @@
 #!/bin/bash
+# THIS ONLY WORKS ON A100 GPU
 set -e 
 #Sample Run: ./train-and-evaluate-single.sh nerfacto /work/mech-ai/arbab/nerfstudio/data/nerfstudio/CCL-plant-for-evaluation/Jul18at3-17PM-poly-processed-rotated-half 10000
 #Sample Run:  ./helper-scripts/train-and-evaluate-single.sh nerfacto data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-processed-img-200 10000
@@ -16,7 +17,7 @@ set -e
 # ed-data-multiple-processed
 # second scenario using polycam data
 # ns-process-data polycam --data data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-polycam/capture.zip --output_dir data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-polycam-processed
-
+echo "Stargin"
 # Variables
 re_run_evaluation=true # This will rerun the evaluation scripts even if the model was already trained, by loading its relavent checkpoint
 nerfstudio_main_directory=$(pwd)
