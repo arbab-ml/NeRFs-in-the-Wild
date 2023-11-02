@@ -17,8 +17,6 @@ for model in "${models[@]}"; do
     echo "_________"
     ./helper-scripts/train-and-evaluate-single.sh $model $data_path $iter $experiment_name
 
-
-
   done
 done
 

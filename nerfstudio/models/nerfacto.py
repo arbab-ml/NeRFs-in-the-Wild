@@ -228,7 +228,7 @@ class NerfactoModel(Model):
         self.normals_shader = NormalsShader()
 
         # losses
-        # self.rgb_loss = MSELoss()
+        self.rgb_loss = MSELoss()
 
         # metrics
         self.psnr = PeakSignalNoiseRatio(data_range=1.0)
@@ -347,8 +347,8 @@ class NerfactoModel(Model):
             gt_image=image,
         )
 
-        # loss_dict["rgb_loss"] = self.rgb_loss(gt_rgb, pred_rgb)
-        loss_dict["rgb_loss"] = self.weighted_rgb_loss(gt_rgb, pred_rgb)
+        loss_dict["rgb_loss"] = self.rgb_loss(gt_rgb, pred_rgb)
+        # loss_dict["rgb_loss"] = self.weighted_rgb_loss(gt_rgb, pred_rgb)
 
         if self.training:
             loss_dict["interlevel_loss"] = self.config.interlevel_loss_mult * interlevel_loss(

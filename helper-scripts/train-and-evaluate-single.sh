@@ -24,12 +24,13 @@ nerfstudio_main_directory=$(pwd)
 model_name=$1 # nerfacto
 data_path=$2 # /work/mech-ai/arbab/nerfstudio/data/nerfstudio/CCL-plant-for-evaluation/Jul18at3-17PM-poly-processed-rotated-half
 training_iterations=$3 
+experiment_name=$4
 # data_identifier="ccl-plant"
 data_identifier=$(basename "$data_path")
 
 tank_and_temples_main_directory=/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation
 # redirecting all the console output to a file as well as console
-output_directory_for_model_evaluation=${tank_and_temples_main_directory}/data/${data_identifier}/evaluations/${model_name}/${training_iterations}
+output_directory_for_model_evaluation=${tank_and_temples_main_directory}/data/${data_identifier}/evaluations/${model_name}${experiment_name}/${training_iterations}
 mkdir -p ${output_directory_for_model_evaluation}
 # if ${output_directory_for_model_evaluation}/config_for_export.txt exists, then skip the training 
 if [ -f "${output_directory_for_model_evaluation}/config_for_export.txt" ]; then
