@@ -11,9 +11,10 @@
       "program": "${file}",
       "args": [
         "nerfacto",
-        "data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-processed",
-        "99"
+        "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
+        "299"
       ]
+      // ./helper-scripts/train-and-evaluate-single-checkpoints-enabled.sh nerfacto data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed  99
 
     },
     {
