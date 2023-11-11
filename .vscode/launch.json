@@ -12,7 +12,7 @@
       "args": [
         "nerfacto",
         "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
-        "299"
+        "50"
       ]
       // ./helper-scripts/train-and-evaluate-single-checkpoints-enabled.sh nerfacto data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed  99
 
@@ -49,6 +49,23 @@
         "instant_ngp",
         "--viewer.no-enable",
         "--logging.event-writer=wandb"
+      ]
+    },
+    {
+      "name": "Python: train - Debug NerfStudio",
+      "type": "python",
+      "request": "launch",
+      "program": "nerfstudio/scripts/train.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "nerfacto",
+        "--data", 
+        "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed", 
+        "--max-num-iterations", 
+        "50"
+
+
       ]
     },
     {

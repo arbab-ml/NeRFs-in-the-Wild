@@ -2,8 +2,8 @@
 
 # models=("nerfacto" "instant-ngp" "mipnerf")
 # iterations=(1000 5000 10000 20000 30000)
-models=("instant-ngp" "nerfacto")
-iterations=(30000)
+models=("nerfacto")
+iterations=(1000)
 
 
 # models=("neus")
@@ -18,8 +18,6 @@ for model in "${models[@]}"; do
     echo $model $data_path $iter
     echo "_________"
     ./helper-scripts/train-and-evaluate-single.sh $model $data_path $iter
-
-
 
   done
 done

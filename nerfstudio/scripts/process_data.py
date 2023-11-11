@@ -44,7 +44,7 @@ class ProcessRecord3D(BaseConverterToNerfstudioDataset):
     """Process Record3D data into a nerfstudio dataset.
 
     This script does the following:
-
+f
     1. Scales images to a specified size.
     2. Converts Record3D poses into the nerfstudio format.
     """

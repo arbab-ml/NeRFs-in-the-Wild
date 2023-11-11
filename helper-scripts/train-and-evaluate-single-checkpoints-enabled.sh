@@ -59,20 +59,30 @@ path_to_get_last_run=$(cat "previous_run.txt")
 
 
 load_directory_from_old_run=None
+load_checkpoint_from_old_run=None
 previous_time_taken=0
+previous_iterations=0
 # Proceed if $path_to_get_last_run is not "None"
 if [[ "$path_to_get_last_run" != "None" ]]; then
   # Attempt to find a .ckpt file in the specified subdirectory
   path_to_last_run=$(cat ${path_to_get_last_run})
   # ckpt_file=$(find "$(dirname "$path_to_last_run")/nerfstudio_models" -type f -name "*.ckpt" | head -n 1)
   load_directory_from_old_run="$(dirname "$path_to_last_run")/nerfstudio_models"
-  
+  load_checkpoint_from_old_run=$(find "$(dirname "$path_to_last_run")/nerfstudio_models" -type f -name "*.ckpt" | head -n 1)
+  echo "-----------------------------"
+  echo "Loading checkpoint from previous run: $load_checkpoint_from_old_run"
+  echo "-----------------------------"
+
   ## Now setting the time spent till last run
   # First read the last (get base directory of path_to_get_last_run)
   base_directory_of_path_to_get_last_run=$(dirname "$path_to_get_last_run")
   # Now read the time_taken.txt file
   previous_time_taken=$(cat "${base_directory_of_path_to_get_last_run}/time_taken.txt")
   # Now add the time_taken to the current time
+
+  #Getting previously trained number of iterations from path_to_get_last_run (which has the format: /work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scannned-data-single-img-50-qual-90-processed/evaluations/nerfacto/50/config_for_export.txt)
+  #First get the directory name
+  previous_iterations=$(basename $(dirname "$path_to_get_last_run"))
 
 
 
@@ -85,12 +95,13 @@ fi
 
 
 
+
 if [ $already_trained -eq 0 ]; then
   SECONDS=0
   if [ "$model_name" = "nerfacto" ]; then
-    ns-train $model_name --load-dir $load_directory_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations # previously it had prediction of normals but that's replaced by open3d
+    ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $((training_iterations-previous_iterations)) # previously it had prediction of normals but that's replaced by open3d
   else
-    ns-train $model_name --load-dir $load_directory_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $training_iterations
+    ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations  $((training_iterations-previous_iterations))
   fi
     #saving the model_output directory in a file named previous_run.txt in current directory after deleting the file first
     rm previous_run.txt
