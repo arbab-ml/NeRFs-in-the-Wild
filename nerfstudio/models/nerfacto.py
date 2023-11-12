@@ -284,8 +284,12 @@ class NerfactoModel(Model):
         ray_samples: RaySamples # STORED_FIELD_OUTPUTS ARE FROM LAST ITERATION
         ray_samples, weights_list, ray_samples_list = self.proposal_sampler(ray_bundle, density_fns=self.density_fns, stored_field_outputs=self.stored_field_outputs )
         field_outputs = self.field.forward(ray_samples, compute_normals=self.config.predict_normals)
+        #Also get the field outputs from the intermediate proposal networks
+        # field_outputs_prop1 = self.field.forward(ray_samples_list[0], compute_normals=self.config.predict_normals)
+        field_outputs_prop2 = self.field.forward(ray_samples_list[0], compute_normals=self.config.predict_normals)
+
         #TODO: check if use_gradient_scaling is necessary before storing the field outputs
-        self.stored_field_outputs = field_outputs
+        self.stored_field_outputs = field_outputs_prop2
 
         if self.config.use_gradient_scaling:
             field_outputs = scale_gradients_by_distance_squared(field_outputs, ray_samples)

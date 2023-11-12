@@ -63,7 +63,7 @@
         "--data", 
         "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed", 
         "--max-num-iterations", 
-        "50"
+        "5000"
 
 
       ]
