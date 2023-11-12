@@ -25,7 +25,8 @@ from nerfacc import OccGridEstimator
 from torch import Tensor, nn
 
 from nerfstudio.cameras.rays import Frustums, RayBundle, RaySamples
-
+from nerfstudio.field_components.field_heads import FieldHeadNames
+from typing import Dict
 
 class Sampler(nn.Module):
     """Generate Samples
@@ -278,6 +279,7 @@ class PDFSampler(Sampler):
         ray_bundle: Optional[RayBundle] = None,
         ray_samples: Optional[RaySamples] = None,
         weights: Optional[Float[Tensor, "*batch num_samples 1"]] = None,
+        stored_field_outputs: Optional[Dict[FieldHeadNames, Tensor]] = None,
         num_samples: Optional[int] = None,
         eps: float = 1e-5,
     ) -> RaySamples:
@@ -303,6 +305,14 @@ class PDFSampler(Sampler):
         num_bins = num_samples + 1
 
         weights = weights[..., 0] + self.histogram_padding
+
+        # Adjust weights using RGB information from stored_field_outputs
+        if stored_field_outputs is not None:
+            rgb_values = stored_field_outputs[FieldHeadNames.RGB]  # Shape: [batch, num_samples, 3]
+            green_channel = rgb_values[..., 1]  # Extract the green channel
+            color_weight_adjustment = green_channel.mean(dim=1, keepdim=True)  # Compute greenness measure
+            weights *= color_weight_adjustment  # Modify original weights by greenness
+
 
         # Add small offset to rays with zero weight to prevent NaNs
         weights_sum = torch.sum(weights, dim=-1, keepdim=True)
@@ -578,6 +588,8 @@ class ProposalNetworkSampler(Sampler):
         self,
         ray_bundle: Optional[RayBundle] = None,
         density_fns: Optional[List[Callable]] = None,
+        stored_field_outputs: Optional[Dict[FieldHeadNames, Tensor]] = None
+
     ) -> Tuple[RaySamples, List, List]:
         assert ray_bundle is not None
         assert density_fns is not None
@@ -600,7 +612,7 @@ class ProposalNetworkSampler(Sampler):
                 # Perform annealing to the weights. This will be a no-op if self._anneal is 1.0.
                 assert weights is not None
                 annealed_weights = torch.pow(weights, self._anneal)
-                ray_samples = self.pdf_sampler(ray_bundle, ray_samples, annealed_weights, num_samples=num_samples)
+                ray_samples = self.pdf_sampler(ray_bundle, ray_samples, annealed_weights, num_samples=num_samples, stored_field_outputs=stored_field_outputs)
             if is_prop:
                 if updated:
                     # always update on the first step or the inf check in grad scaling crashes

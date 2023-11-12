@@ -134,6 +134,9 @@ class NerfactoModel(Model):
     Args:
         config: Nerfacto configuration to instantiate model
     """
+    def __init__(self, config, scene_box, num_train_data, **kwargs):
+        super().__init__(config, scene_box, num_train_data, **kwargs)
+        self.stored_field_outputs = None
 
     config: NerfactoModelConfig
 
@@ -278,9 +281,12 @@ class NerfactoModel(Model):
         return callbacks
 
     def get_outputs(self, ray_bundle: RayBundle):
-        ray_samples: RaySamples
-        ray_samples, weights_list, ray_samples_list = self.proposal_sampler(ray_bundle, density_fns=self.density_fns)
+        ray_samples: RaySamples # STORED_FIELD_OUTPUTS ARE FROM LAST ITERATION
+        ray_samples, weights_list, ray_samples_list = self.proposal_sampler(ray_bundle, density_fns=self.density_fns, stored_field_outputs=self.stored_field_outputs )
         field_outputs = self.field.forward(ray_samples, compute_normals=self.config.predict_normals)
+        #TODO: check if use_gradient_scaling is necessary before storing the field outputs
+        self.stored_field_outputs = field_outputs
+
         if self.config.use_gradient_scaling:
             field_outputs = scale_gradients_by_distance_squared(field_outputs, ray_samples)
 
