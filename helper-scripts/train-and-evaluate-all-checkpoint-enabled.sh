@@ -2,8 +2,8 @@
 
 # models=("nerfacto" "instant-ngp" "mipnerf")
 # iterations=(1000 5000 10000 20000 30000)
-models=("instant-ngp" "nerfacto")
-iterations=(30000)
+models=( "nerfacto")
+iterations=(300 600 900)
 
 # Save a flag "None" in a file named previous_run.txt in current directory after deleting the file first
 rm previous_run.txt

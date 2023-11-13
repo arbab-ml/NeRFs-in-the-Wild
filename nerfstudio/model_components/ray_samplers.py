@@ -305,13 +305,14 @@ class PDFSampler(Sampler):
         num_bins = num_samples + 1
 
         weights = weights[..., 0] + self.histogram_padding
-
+        weights_temp_saved=weights
         # Adjust weights using RGB information from stored_field_outputs (only triggering this for second stage pdf sampling, not for final or initial uniform sampling)
-        if stored_field_outputs is not None and stored_field_outputs[FieldHeadNames.RGB].shape[-1] == 256:
+        if stored_field_outputs is not None and weights.shape[-1] == 256: #TODO this is hardcoded way to do it, need to change it
             rgb_values = stored_field_outputs[FieldHeadNames.RGB]  # Shape: [batch, num_samples, 3]
             green_channel = rgb_values[..., 1]  # Extract the green channel
             # color_weight_adjustment = green_channel.mean(dim=1, keepdim=True)  # Compute greenness measure
-            weights *= green_channel  # Modify original weights by greenness
+            if green_channel.size(0) == weights.size(0):   #TODO: CRITICAL This is unthoughtful line just to test out the dimension thing
+                weights *= green_channel  # Modify original weights by greenness
 
 
         # Add small offset to rays with zero weight to prevent NaNs
