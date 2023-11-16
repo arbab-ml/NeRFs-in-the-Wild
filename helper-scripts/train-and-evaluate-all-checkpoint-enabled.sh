@@ -4,8 +4,8 @@
 # FOR INDEPENDENT RUNS US SIMPLE ONE WITHOUT CHECKPOINTS ENABLED INSTEAD 
 
 # models=("nerfacto" "instant-ngp" "mipnerf")
-iterations=(1000 2000 3000 4000 5000 6000 7000 8000 9000 10000)
-models=("nerfacto") # EACH MODEL COULD BE RUN INDEPENDENTLY AFTER ENSURING THAT THE PREVIOUS_RUN.TXT FILE IS SET TO NONE
+iterations=(1000)
+models=("vanilla-nerf") # EACH MODEL COULD BE RUN INDEPENDENTLY AFTER ENSURING THAT THE PREVIOUS_RUN.TXT FILE IS SET TO NONE
 
 
 # Save a flag "None" in a file named previous_run.txt in current directory after deleting the file first
