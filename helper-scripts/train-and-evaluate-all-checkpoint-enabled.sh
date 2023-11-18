@@ -4,8 +4,8 @@
 # FOR INDEPENDENT RUNS US SIMPLE ONE WITHOUT CHECKPOINTS ENABLED INSTEAD 
 
 # models=("nerfacto" "instant-ngp" "mipnerf")
-iterations=(1000)
-models=("vanilla-nerf") # EACH MODEL COULD BE RUN INDEPENDENTLY AFTER ENSURING THAT THE PREVIOUS_RUN.TXT FILE IS SET TO NONE
+models=( "nerfacto")
+iterations=(100 200 500 1000 2000 5000 10000)
 
 
 # Save a flag "None" in a file named previous_run.txt in current directory after deleting the file first
@@ -13,8 +13,8 @@ rm previous_run.txt
 echo "None" > previous_run.txt
 
 
-data_path="data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-polycam-images-processed"
-# data_path="data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed"
+# data_path="data/nerfstudio/CCL-scanned-data-multiple/CCL-scanned-data-multiple-polycam-images-processed"
+data_path="data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed"
 
 for model in "${models[@]}"; do
   for iter in "${iterations[@]}"; do
