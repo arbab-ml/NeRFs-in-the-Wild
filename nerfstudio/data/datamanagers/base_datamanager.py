@@ -21,55 +21,36 @@ from __future__ import annotations
 from abc import abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from pathlib import Path
 from functools import cached_property
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    List,
-    Literal,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-    cast,
-    ForwardRef,
-    get_origin,
-    get_args,
-)
+from pathlib import Path
+from typing import (Any, Callable, Dict, ForwardRef, Generic, List, Literal,
+                    Optional, Tuple, Type, Union, cast, get_args, get_origin)
 
 import torch
-from torch import nn
-from torch.nn import Parameter
-from torch.utils.data.distributed import DistributedSampler
-from typing_extensions import TypeVar
-
 from nerfstudio.cameras.camera_optimizers import CameraOptimizerConfig
 from nerfstudio.cameras.cameras import CameraType
 from nerfstudio.cameras.rays import RayBundle
 from nerfstudio.configs.base_config import InstantiateConfig
 from nerfstudio.configs.dataparser_configs import AnnotatedDataParserUnion
 from nerfstudio.data.dataparsers.base_dataparser import DataparserOutputs
-from nerfstudio.data.dataparsers.blender_dataparser import BlenderDataParserConfig
+from nerfstudio.data.dataparsers.blender_dataparser import \
+    BlenderDataParserConfig
 from nerfstudio.data.datasets.base_dataset import InputDataset
-from nerfstudio.data.pixel_samplers import (
-    PixelSampler,
-    PixelSamplerConfig,
-    PatchPixelSamplerConfig,
-)
-from nerfstudio.data.utils.dataloaders import (
-    CacheDataloader,
-    FixedIndicesEvalDataloader,
-    RandIndicesEvalDataloader,
-)
+from nerfstudio.data.pixel_samplers import (PatchPixelSamplerConfig,
+                                            PixelSampler, PixelSamplerConfig)
+from nerfstudio.data.utils.dataloaders import (CacheDataloader,
+                                               FixedIndicesEvalDataloader,
+                                               RandIndicesEvalDataloader)
 from nerfstudio.data.utils.nerfstudio_collate import nerfstudio_collate
-from nerfstudio.engine.callbacks import TrainingCallback, TrainingCallbackAttributes
+from nerfstudio.engine.callbacks import (TrainingCallback,
+                                         TrainingCallbackAttributes)
 from nerfstudio.model_components.ray_generators import RayGenerator
-from nerfstudio.utils.misc import IterableWrapper
+from nerfstudio.utils.misc import IterableWrapper, get_orig_class
 from nerfstudio.utils.rich_utils import CONSOLE
-from nerfstudio.utils.misc import get_orig_class
+from torch import nn
+from torch.nn import Parameter
+from torch.utils.data.distributed import DistributedSampler
+from typing_extensions import TypeVar
 
 
 def variable_res_collate(batch: List[Dict]) -> Dict:
@@ -535,6 +516,12 @@ class VanillaDataManager(DataManager, Generic[TDataset]):
         """Returns the next batch of data from the train dataloader."""
         self.train_count += 1
         image_batch = next(self.iter_train_image_dataloader)
+        
+        #save this image_batch as a file on hard disk
+        # import pickle
+        # with open('image_batch.pkl', 'wb') as file:
+        #     pickle.dump(image_batch, file)
+
         assert self.train_pixel_sampler is not None
         assert isinstance(image_batch, dict)
         batch = self.train_pixel_sampler.sample(image_batch)

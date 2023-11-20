@@ -17,16 +17,15 @@ Collection of sampling strategies
 """
 
 from abc import abstractmethod
-from typing import Any, Callable, List, Optional, Protocol, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Protocol, Tuple, Union
 
 import torch
 from jaxtyping import Float
 from nerfacc import OccGridEstimator
-from torch import Tensor, nn
-
 from nerfstudio.cameras.rays import Frustums, RayBundle, RaySamples
 from nerfstudio.field_components.field_heads import FieldHeadNames
-from typing import Dict
+from torch import Tensor, nn
+
 
 class Sampler(nn.Module):
     """Generate Samples
@@ -305,7 +304,7 @@ class PDFSampler(Sampler):
         num_bins = num_samples + 1
 
         weights = weights[..., 0] + self.histogram_padding
-        weights_temp_saved=weights
+        weights_temp_saved=weights.detach().clone()
         # Adjust weights using RGB information from stored_field_outputs (only triggering this for second stage pdf sampling, not for final or initial uniform sampling)
         if stored_field_outputs is not None and weights.shape[-1] == 256: #TODO this is hardcoded way to do it, need to change it
             rgb_values = stored_field_outputs[FieldHeadNames.RGB]  # Shape: [batch, num_samples, 3]
@@ -313,8 +312,7 @@ class PDFSampler(Sampler):
             # color_weight_adjustment = green_channel.mean(dim=1, keepdim=True)  # Compute greenness measure
             if green_channel.size(0) == weights.size(0):   #TODO: CRITICAL This is unthoughtful line just to test out the dimension thing
                 weights *= green_channel  # Modify original weights by greenness
-
-
+        #^^ UNCOMMENT
         # Add small offset to rays with zero weight to prevent NaNs
         weights_sum = torch.sum(weights, dim=-1, keepdim=True)
         padding = torch.relu(eps - weights_sum)
@@ -325,6 +323,59 @@ class PDFSampler(Sampler):
         cdf = torch.min(torch.ones_like(pdf), torch.cumsum(pdf, dim=-1))
         cdf = torch.cat([torch.zeros_like(cdf[..., :1]), cdf], dim=-1)
 
+        # ADditions: Plotting the pdf if the weights were multiplied by green channel
+        # if stored_field_outputs is not None and weights.shape[-1] == 256 and (green_channel.size(0) == weights.size(0)):
+        #     # print("Give in code for plotting pdf")
+        #     pass
+        #     ## for greenness
+        #     import matplotlib.pyplot as plt
+        #     selected_ray_index = 2235  # Use the index of the ray you are interested in
+        #     pdf_values = pdf.cpu().detach().numpy()[selected_ray_index]  # Extract the PDF values for the selected ray
+
+        #     # Now plot the actual PDF values
+        #     plt.figure(figsize=(5, 3))  # Optional: Define the size of the figure
+        #     plt.plot(pdf_values)  # Plot the PDF values
+        #     plt.xlabel('Sample Index')  # Label for the x-axis
+        #     plt.ylabel('Probability Density')  # Label for the y-axis
+        #     plt.title(f'Probability Density Function for Ray Index {selected_ray_index}')  # Title of the plot
+        #     plt.grid(True)  # Add a grid for better visibility
+        #     plt.tight_layout()  # This will adjust the layout
+
+        #     # Save the plot as a PNG file
+        #     plt.savefig('greeness-experiment/PDF-step500-with-green.png')
+        #     ## For vanilla
+        #     weights_sum = torch.sum(weights_temp_saved, dim=-1, keepdim=True)
+        #     padding = torch.relu(eps - weights_sum)
+        #     weights_temp_saved = weights_temp_saved + padding / weights.shape[-1]
+        #     weights_sum += padding
+
+        #     pdf = weights_temp_saved / weights_sum
+        #     cdf = torch.min(torch.ones_like(pdf), torch.cumsum(pdf, dim=-1))
+        #     cdf = torch.cat([torch.zeros_like(cdf[..., :1]), cdf], dim=-1)
+
+        #     # Now plotting code:
+
+        #     # for plotting the pdf inside pdfsampler:
+        #     # import matplotlib.pyplot as plt
+        #     # selected_ray_index = 2235  # Use the index of the ray you are interested in
+        #     pdf_values = pdf.cpu().detach().numpy()[selected_ray_index]  # Extract the PDF values for the selected ray
+
+        #     # Now plot the actual PDF values
+        #     plt.figure(figsize=(5, 3))  # Optional: Define the size of the figure
+        #     plt.plot(pdf_values)  # Plot the PDF values
+        #     plt.xlabel('Sample Index')  # Label for the x-axis
+        #     plt.ylabel('Probability Density')  # Label for the y-axis
+        #     plt.title(f'Probability Density Function for Ray Index {selected_ray_index}')  # Title of the plot
+        #     plt.grid(True)  # Add a grid for better visibility
+        #     plt.tight_layout()  # This will adjust the layout
+
+        #     # Save the plot as a PNG file
+        #     plt.savefig('greeness-experiment/PDF-step500-vanilla.png')
+        #     # import matplotlib.pyplot as plt
+        #     # selected_ray_index=2235
+        #     # plt.plot(pdf.cpu().detach().numpy()[selected_ray_index].shape)
+        #     # plt.savefig('pdf.png')
+        #^^ UNCOMMENT
         if self.train_stratified and self.training:
             # Stratified samples between 0 and 1
             u = torch.linspace(0.0, 1.0 - (1.0 / num_bins), steps=num_bins, device=cdf.device)
@@ -380,6 +431,7 @@ class PDFSampler(Sampler):
             spacing_to_euclidean_fn=ray_samples.spacing_to_euclidean_fn,
         )
 
+        
         return ray_samples
 
 
