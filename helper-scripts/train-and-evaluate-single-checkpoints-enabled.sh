@@ -30,7 +30,7 @@ training_iterations=$3
 # data_identifier="ccl-plant"
 data_identifier=$(basename "$data_path")
 
-tank_and_temples_main_directory=/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation
+tank_and_temples_main_directory=/work/mech-ai-scratch/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation
 # redirecting all the console output to a file as well as console
 output_directory_for_model_evaluation=${tank_and_temples_main_directory}/data/${data_identifier}/evaluations/${model_name}/${training_iterations}
 mkdir -p ${output_directory_for_model_evaluation}
@@ -49,7 +49,7 @@ fi
 source activate nerfstudio10
 module load colmap
 module load cuda
-cd /work/mech-ai/arbab/NeRFs-in-the-Wild
+cd /work/mech-ai-scratch/arbab/NeRFs-in-the-Wild
 
 
 ##### getting the checkpoint from the previous training
@@ -93,13 +93,12 @@ fi
 ######
 
 
-
-
-
 if [ $already_trained -eq 0 ]; then
   SECONDS=0
   if [ "$model_name" = "nerfacto" ]; then
     ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $((training_iterations-previous_iterations)) # previously it had prediction of normals but that's replaced by open3d
+  elif [ "$model_name" = "tensorf" ]; then
+    ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $((training_iterations-previous_iterations)) nerfstudio-data # previously it had prediction of normals but that's replaced by open3d
   else
     ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations  $((training_iterations-previous_iterations))
   fi
@@ -117,7 +116,7 @@ if [ $already_trained -eq 0 ]; then
 fi
 
 # Point cloud export
-latest_folder=$(ls -d /work/mech-ai/arbab/NeRFs-in-the-Wild/outputs/${data_path##*/}/$model_name/* | sort -r | head -n 1)
+latest_folder=$(ls -d /work/mech-ai-scratch/arbab/NeRFs-in-the-Wild/outputs/${data_path##*/}/$model_name/* | sort -r | head -n 1)
 config_for_export="$latest_folder/config.yml"
 echo $config_for_export
 output_dir_pointcloud="$(pwd)/exports/pcd/${data_path##*/}/${model_name}"
@@ -135,6 +134,9 @@ if [ $already_trained -eq 0 ]; then # Only training if it was not already traine
     "nerfacto")
       ns-export pointcloud --normal-method open3d --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True  --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}" 
       ;;
+      "tensorf")
+      ns-export pointcloud --normal-method open3d --load-config $config_for_export --output-dir $output_dir_pointcloud --num-points 1000000 --remove-outliers True  --use-bounding-box True --bounding-box-min "${bbox_min[@]}" --bounding-box-max "${bbox_max[@]}" 
+      ;;
   esac
 fi
 
@@ -146,7 +148,7 @@ fi
 
 # Modules and directory for Evaluation
 source activate tanksandtemples-eval-env2
-cd /work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox
+cd /work/mech-ai-scratch/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox
 
 # Prerequisites: 
 #1. Have the log file processed using command like: python convert_to_logfile.py /work/mech-ai/arbab/nerfstudio/data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed/colmap/sparse/0/ /work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scannned-data-single-img-50-qual-90-processed/CCL-scannned-data-single-img-50-qual-90-processed_COLMAP_SfM.log /work/mech-ai/arbab/nerfstudio/data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed/images/ COLMAP jpg

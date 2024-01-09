@@ -9,10 +9,12 @@
       "type": "bashdb",
       "request": "launch",
       "program": "${file}",
+      "showDebugOutput": true,
+      "terminalKind": "integrated",
       "args": [
-        "nerfacto",
+        "/work/mech-ai/arbab/NeRFs-in-the-Wild/data/nerfstudio/CCL-scanned-data-outdoor-stage2-low-height/CCL-scanned-data-outdoor-stage2-low-height-processed",
         "data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed",
-        "50"
+        "100"
       ]
       // ./helper-scripts/train-and-evaluate-single-checkpoints-enabled.sh nerfacto data/nerfstudio/CCL-scanned-data-single/CCL-scannned-data-single-img-50-qual-90-processed  99
 
