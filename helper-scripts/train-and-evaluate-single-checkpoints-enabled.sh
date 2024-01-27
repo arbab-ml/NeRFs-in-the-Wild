@@ -96,7 +96,7 @@ fi
 if [ $already_trained -eq 0 ]; then
   SECONDS=0
   if [ "$model_name" = "nerfacto" ]; then
-    ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $((training_iterations-previous_iterations)) # previously it had prediction of normals but that's replaced by open3d
+    ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --pipeline.datamanager.masks-on-gpu True --pipeline.model.background_color "random" --pipeline.model.disable-scene-contraction True --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $((training_iterations-previous_iterations)) # previously it had prediction of normals but that's replaced by open3d
   elif [ "$model_name" = "tensorf" ]; then
     ns-train $model_name --load-checkpoint $load_checkpoint_from_old_run --viewer.websocket-port 8008 --viewer.quit-on-train-completion True --data $data_path --max-num-iterations $((training_iterations-previous_iterations)) nerfstudio-data # previously it had prediction of normals but that's replaced by open3d
   else
