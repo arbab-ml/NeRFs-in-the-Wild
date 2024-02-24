@@ -3,12 +3,14 @@ import json
 import os
 
 
-root_dir = "/work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/CCL-scanned-data-multiple-polycam-images-processed/evaluations"
-csv_file = root_dir+"/results-commulated.csv"
+root_dir = "/work/mech-ai-scratch/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/lpips-validation-data-processed/evaluations"
+csv_file = root_dir+"/results-lpips.csv"
+
 # Initialize CSV file
 with open(csv_file, 'w') as f:
     csv_writer = csv.writer(f)
-    headers = ["Model Name", "Number of Iterations", "Precision", "Recall", "F1 Score", "PSNR", "SSIM", "LPIPS", "Time Taken (s)"]
+    # headers = ["Model Name", "Number of Iterations", "Precision", "Recall", "F1 Score", "PSNR", "SSIM", "LPIPS", "Time Taken (s)"]
+    headers = ["Model Name", "Number of Iterations", "PSNR", "SSIM", "LPIPS", "Time Taken (s)"]
     csv_writer.writerow(headers)
 
 # Model rename dictionary
@@ -24,7 +26,7 @@ for model in os.listdir(root_dir):
         model_dir = os.path.join(root_dir, model)
         for iteration in os.listdir(model_dir):
             iteration_dir = os.path.join(model_dir, iteration)
-            console_log_path = os.path.join(iteration_dir, "console_log.txt")
+            # console_log_path = os.path.join(iteration_dir, "console_log.txt") #EVAL
             psnr_json_path = os.path.join(iteration_dir, "psnr.json")
             time_taken_path = os.path.join(iteration_dir, "time_taken.txt")
             
@@ -32,15 +34,15 @@ for model in os.listdir(root_dir):
             psnr, ssim, lpips = "", "", ""
             time_taken = ""
 
-            with open(console_log_path, 'r') as f:
-                lines = f.readlines()
-                for line in lines:
-                    if "precision :" in line:
-                        precision = "{:.2f}".format(float(line.split(":")[1].strip()) * 100)
-                    elif "recall :" in line:
-                        recall = "{:.2f}".format(float(line.split(":")[1].strip()) * 100)
-                    elif "f-score :" in line:
-                        f1_score = "{:.2f}".format(float(line.split(":")[1].strip()) * 100)
+            # with open(console_log_path, 'r') as f: #EVAL
+            #     lines = f.readlines()
+            #     for line in lines:
+            #         if "precision :" in line:
+            #             precision = "{:.2f}".format(float(line.split(":")[1].strip()) * 100)
+            #         elif "recall :" in line:
+            #             recall = "{:.2f}".format(float(line.split(":")[1].strip()) * 100)
+            #         elif "f-score :" in line:
+            #             f1_score = "{:.2f}".format(float(line.split(":")[1].strip()) * 100)
 
             if os.path.exists(psnr_json_path):
                 with open(psnr_json_path, 'r') as f:
@@ -60,7 +62,8 @@ for model in os.listdir(root_dir):
             # Write to CSV
             with open(csv_file, 'a') as f:
                 csv_writer = csv.writer(f)
-                csv_writer.writerow([model, iteration, precision, recall, f1_score, psnr, ssim, lpips, time_taken])
+                # csv_writer.writerow([model, iteration, precision, recall, f1_score, psnr, ssim, lpips, time_taken])#EVAL
+                csv_writer.writerow([model, iteration, psnr, ssim, lpips, time_taken])
 
 
 print("Done compiling!")
@@ -70,7 +73,7 @@ print("Done compiling!")
 # Define the column names
 MODEL_NAME_COL = "Model Name"
 ITERATIONS_COL = "Number of Iterations"
-
+print(csv_file)
 
 # Read the CSV file into a list of rows (as dictionaries)
 with open(csv_file, 'r') as f:

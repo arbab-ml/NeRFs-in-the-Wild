@@ -155,7 +155,6 @@ cd /work/mech-ai-scratch/arbab/tanksandtemples-eval/TanksAndTemples/python_toolb
 # -> things to be careful about: there should be a training / at the end of 0/ otherwise it will not work
 # -> create teh folder for the log file before running the command
 
-
 #2. Have ground truth pointcloud in /work/mech-ai/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/ccl-plant/ccl-plant.ply
 
 #3. Have alignment file: ccl-plant_trans.txt
@@ -170,11 +169,11 @@ if [ $already_trained -eq 0 ]; then
 cp "${output_dir_pointcloud}/point_cloud.ply" ${output_directory_for_model_evaluation}/point_cloud.ply
 fi
 
-python run.py \
-  --dataset-dir ${tank_and_temples_main_directory}/data/${data_identifier} \
-  --traj-path ${tank_and_temples_main_directory}/data/${data_identifier}/${data_identifier}_COLMAP_SfM.log \
-  --ply-path ${output_directory_for_model_evaluation}/point_cloud.ply \
-  &> ${output_directory_for_model_evaluation}/console_log.txt
+# python run.py \
+#   --dataset-dir ${tank_and_temples_main_directory}/data/${data_identifier} \
+#   --traj-path ${tank_and_temples_main_directory}/data/${data_identifier}/${data_identifier}_COLMAP_SfM.log \
+#   --ply-path ${output_directory_for_model_evaluation}/point_cloud.ply \
+#   &> ${output_directory_for_model_evaluation}/console_log.txt
 
 
 # cp -r data/${data_identifier}/evaluation/* data/${data_identifier}/evaluations/${model_name}/${training_iterations}/
