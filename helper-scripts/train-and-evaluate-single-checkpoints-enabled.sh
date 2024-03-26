@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e 
 
+#for alpha-voxel-carving
+# ns-train nerfacto --pipeline.model.background_color "random" --pipeline.model.disable-scene-contraction True --data data/nerfstudio/voxel-carving-stuff/stationary-record-3-segmented-alpha-processed
+# ns-process-data images --matching-method sequential --data /work/mech-ai-scratch/arbab/NeRFs-in-the-Wild/data/nerfstudio/voxel-carving-stuff/stationary-record-3-segmented-alpha/stationary-record-3-segmented-alpha --output_dir /work/mech-ai-scratch/arbab/NeRFs-in-the-Wild/data/nerfstudio/voxel-carving-stuff/stationary-record-3-segmented-alpha-processed 
+
+
 #Some notes: Make sure the previous_run.txt is None if running this script independently
 #Notes 2: This script only support sequential non-interruped training. 
 
