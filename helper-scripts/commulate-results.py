@@ -3,7 +3,7 @@ import json
 import os
 
 
-root_dir = "/work/mech-ai-scratch/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/lpips-validation-data-processed/evaluations"
+root_dir = "/work/mech-ai-scratch/arbab/tanksandtemples-eval/TanksAndTemples/python_toolbox/evaluation/data/lpips-validation-data-processed-5/evaluations"
 csv_file = root_dir+"/results-lpips.csv"
 
 # Initialize CSV file
